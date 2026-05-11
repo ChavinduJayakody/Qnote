@@ -1,59 +1,47 @@
 import 'package:flutter/material.dart';
+import '../models/note.dart';
+import '../services/note_service.dart';
+import 'add_note_screen.dart';
+import '../widgets/note_card.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final NoteService noteService;
+
+  const HomeScreen({super.key, required this.noteService});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
+    final List<Note> notes = widget.noteService.notes;
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-
       appBar: AppBar(
-        title: const Text(
-          "Qnote",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Qnote"),
         centerTitle: true,
-        elevation: 0,
       ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Your Notes",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+      body: notes.isEmpty
+          ? const Center(child: Text("No notes yet"))
+          : ListView.builder(
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                final note = notes[index];
+                return NoteCard(note: note);
+              },
             ),
-
-            const SizedBox(height: 20),
-
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.note_alt_outlined, size: 80, color: Colors.grey),
-                    SizedBox(height: 10),
-                    Text(
-                      "No notes yet",
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // later we add navigation
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  AddNoteScreen(noteService: widget.noteService),
+            ),
+          );
+          setState(() {});
         },
         child: const Icon(Icons.add),
       ),
