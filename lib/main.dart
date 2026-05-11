@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'services/note_service.dart';
 
 void main() {
   runApp(const QnoteApp());
@@ -10,9 +11,11 @@ class QnoteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    final noteService = NoteService(); // ✅ create instance
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: HomeScreen(noteService: noteService), // ✅ PASS IT HERE
     );
   }
 }
